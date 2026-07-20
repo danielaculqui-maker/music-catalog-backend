@@ -5,6 +5,7 @@ class Artista(models.Model):
     biografia = models.TextField(blank=True)
     genero_musical = models.CharField(max_length=100)
     fecha_formacion = models.DateField()
+    foto = models.ImageField(upload_to='artistas/', blank=True, null=True)
 
     def __str__(self):
         return self.nombre
@@ -18,4 +19,3 @@ class Album(models.Model):
 
     def __str__(self):
         return f"{self.titulo} - {self.artista.nombre}"
-    

@@ -3,6 +3,7 @@ from .models import Artista, Album
 from .serializers import ArtistaSerializer, AlbumSerializer
 
 
+
 class ArtistaViewSet(viewsets.ModelViewSet):
     queryset = Artista.objects.all()
     serializer_class = ArtistaSerializer
@@ -11,4 +12,4 @@ class ArtistaViewSet(viewsets.ModelViewSet):
 class AlbumViewSet(viewsets.ModelViewSet):
     queryset = Album.objects.all()
     serializer_class = AlbumSerializer
-    
+
