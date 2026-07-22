@@ -1,109 +1,157 @@
 # Music Catalog - Backend
 
+## Autores
+
+- Daniela Culqui
+- Cristian Tenorio
+
+## Descripción General
+
 API REST desarrollada con Django y Django REST Framework para la gestión de un catálogo de artistas y álbumes musicales, con autenticación mediante OAuth 2.0.
 
-## 🛠️ Tecnologías
+## Objetivo
 
-- Python 3.12
+Construir una API REST completa en Django que gestione dos entidades relacionadas (Artista y Álbum, relación uno a muchos), protegida con autenticación OAuth 2.0, sin renderizar ninguna vista HTML.
+
+## Requisitos previos
+
+- Python 3.12 o superior instalado
+- pip
+- Editor de código (recomendado: VS Code)
+- Cuenta de Postman (para probar los endpoints)
+
+## Requisitos técnicos
+
 - Django 6.0
 - Django REST Framework
 - django-oauth-toolkit (autenticación OAuth 2.0)
 - django-cors-headers
 - Pillow (manejo de imágenes)
-- SQLite (base de datos local)
+- SQLite como base de datos
 
-## 📋 Requisitos previos
+## Funcionalidades
 
-- Python 3.12 o superior instalado
-- pip
+- API REST con los 4 métodos HTTP (GET, POST, PUT/PATCH, DELETE) para Artistas y Álbumes
+- Relación uno a muchos entre Artista y Álbum
+- Autenticación y protección de endpoints con OAuth 2.0
+- Carga de imágenes para los artistas
+- Respuestas en formato JSON
 
-## 🚀 Instalación
+## Estructura del proyecto
 
-### 1. Clonar el repositorio
+```
+/config
+  settings.py
+  urls.py
+/catalogo
+  models.py
+  serializers.py
+  views.py
+  urls.py
+  /migrations
+/media
+  /artistas
+manage.py
+requirements.txt
+```
 
-```bash
-git clone https://github.com/TU_USUARIO/music-catalog-backend.git
+## Modelo de datos
+
+**Artista**
+- nombre
+- biografia
+- genero_musical
+- fecha_formacion
+- foto 
+
+**Album** (relación uno a muchos con Artista)
+- artista (clave foránea)
+- titulo
+- fecha_lanzamiento
+- numero_canciones
+
+## Endpoints principales
+
+| Método | Endpoint | Descripción | Requiere token |
+|--------|----------|--------------|-----------------|
+| POST | /o/token/ | Obtener token de acceso OAuth2 | No |
+| GET | /api/artistas/ | Listar artistas | Sí |
+| GET | /api/artistas/{id}/ | Detalle de un artista (con sus álbumes) | Sí |
+| POST | /api/artistas/ | Crear artista | Sí |
+| PUT/PATCH | /api/artistas/{id}/ | Editar artista | Sí |
+| DELETE | /api/artistas/{id}/ | Eliminar artista | Sí |
+| GET | /api/albumes/ | Listar álbumes | Sí |
+| GET | /api/albumes/{id}/ | Detalle de un álbum | Sí |
+| POST | /api/albumes/ | Crear álbum | Sí |
+| PUT/PATCH | /api/albumes/{id}/ | Editar álbum | Sí |
+| DELETE | /api/albumes/{id}/ | Eliminar álbum | Sí |
+
+## Instalación del proyecto
+
+1. Clonar el repositorio
+
+```
+git clone https://github.com/danielaculqui-maker/music-catalog-backend.git
 cd music-catalog-backend
 ```
 
-### 2. Crear y activar el entorno virtual
+2. Abrir en VS Code la carpeta del repositorio clonado
 
-```bash
+3. Crear y activar el entorno virtual
+
+```
 python -m venv venv
 ```
 
 Windows:
-```bash
+```
 venv\Scripts\activate
 ```
 
 Mac/Linux:
-```bash
+```
 source venv/bin/activate
 ```
 
-### 3. Instalar las dependencias
+4. Instalar las dependencias
 
-```bash
+```
 pip install -r requirements.txt
 ```
 
-### 4. Aplicar las migraciones
+5. Aplicar las migraciones
 
-```bash
+```
 python manage.py migrate
 ```
 
-### 5. Crear un superusuario
+6. Crear un superusuario
 
-```bash
+```
 python manage.py createsuperuser
 ```
 
-Vas a necesitar este usuario para acceder al panel de administración y para autenticarte en la API.
+7. Levantar el servidor
 
-### 6. Registrar una aplicación OAuth2
-
-1. Levantar el servidor (ver paso siguiente)
-2. Ir a `http://127.0.0.1:8000/admin/` e iniciar sesión con el superusuario
-3. Ir a **Django OAuth Toolkit → Applications → Add Application**
-4. Completar:
-   - **Client type**: `Confidential`
-   - **Authorization grant type**: `Resource owner password-based`
-   - **Name**: `music-catalog-app`
-5. Guardar y copiar el **Client id** y **Client secret** generados (el secret no se puede volver a ver después)
-
-### 7. Levantar el servidor
-
-```bash
+```
 python manage.py runserver
 ```
 
-El servidor queda disponible en `http://127.0.0.1:8000/`
+## Registrar una aplicación OAuth2
 
-> ⚠️ La raíz (`/`) no tiene ninguna vista asignada a propósito, ya que Django funciona únicamente como API REST (no renderiza HTML). Es normal ver un error 404 al entrar a esa URL.
+1. Con el servidor corriendo, ingresar a `http://127.0.0.1:8000/admin/` e iniciar sesión con el superusuario
+2. Ir a **Django OAuth Toolkit → Applications → Add Application**
+3. Completar:
+   - Client type: `Confidential`
+   - Authorization grant type: `Resource owner password-based`
+   - Name: `music-catalog-app`
+4. Guardar y copiar el **Client id** y **Client secret** generados (el secret no se puede volver a ver después de este paso)
 
-## 📡 Endpoints principales
+Estos valores se deben usar en el archivo `.env` del frontend.
 
-| Método | Endpoint | Descripción | Requiere token |
-|--------|----------|--------------|-----------------|
-| POST | `/o/token/` | Obtener token de acceso OAuth2 | No |
-| GET | `/api/artistas/` | Listar artistas | Sí |
-| GET | `/api/artistas/{id}/` | Detalle de un artista (incluye sus álbumes) | Sí |
-| POST | `/api/artistas/` | Crear artista | Sí |
-| PUT/PATCH | `/api/artistas/{id}/` | Editar artista | Sí |
-| DELETE | `/api/artistas/{id}/` | Eliminar artista | Sí |
-| GET | `/api/albumes/` | Listar álbumes | Sí |
-| GET | `/api/albumes/{id}/` | Detalle de un álbum | Sí |
-| POST | `/api/albumes/` | Crear álbum | Sí |
-| PUT/PATCH | `/api/albumes/{id}/` | Editar álbum | Sí |
-| DELETE | `/api/albumes/{id}/` | Eliminar álbum | Sí |
+## Autenticación
 
-## 🔐 Autenticación
-
-Todos los endpoints bajo `/api/` requieren un token OAuth2 válido.
-
-Para obtenerlo, hacer un `POST` a `/o/token/` con body tipo `x-www-form-urlencoded`:
+Para obtener un token, se debe hacer un `POST` a `/o/token/` con body tipo `x-www-form-urlencoded`:
 
 ```
 grant_type=password
@@ -114,26 +162,52 @@ client_secret=tu_client_secret
 ```
 
 El token obtenido se debe enviar en cada request protegida, en el header:
+
 ```
 Authorization: Bearer {access_token}
 ```
 
-## 📁 Modelo de datos
+## Comandos útiles
 
-**Artista**
-- nombre
-- biografia
-- genero_musical
-- fecha_formacion
-- foto (opcional)
+Generar el archivo de dependencias
 
-**Album** (relación uno a muchos con Artista)
-- artista (clave foránea)
-- titulo
-- fecha_lanzamiento
-- numero_canciones
+```
+pip freeze > requirements.txt
+```
 
-## 👥 Autores
+Crear migraciones tras cambios en los modelos
 
-- Daniela Culqui
-- Cristian Tenorio
+```
+python manage.py makemigrations
+```
+
+## Comandos git
+
+Verificar los archivos modificados
+
+```
+git status
+```
+
+Agregar archivos al área de preparación
+
+```
+git add .
+```
+
+Realizar un commit
+
+```
+git commit -m "descripción de cambios"
+```
+
+Enviar los cambios a GitHub
+
+```
+git push
+```
+
+## Nota sobre la raíz del servidor
+
+La ruta raíz (`/`) no tiene ninguna vista asignada de forma intencional, ya que Django funciona únicamente como API REST y no debe renderizar HTML. Es normal obtener un error 404 al ingresar a esa URL directamente.
+
